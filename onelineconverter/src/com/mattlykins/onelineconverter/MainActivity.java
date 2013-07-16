@@ -1,19 +1,21 @@
 package com.mattlykins.onelineconverter;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.mattlykins.onelineconverter.dbContract.dBase;
 
 import android.os.Bundle;
 import android.app.Activity;
 import android.content.Context;
 import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
+import android.util.Log;
 import android.view.Menu;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.Toast;
 
 public class MainActivity extends Activity implements OnClickListener
 {
@@ -61,48 +63,112 @@ public class MainActivity extends Activity implements OnClickListener
 			sFromUnit = sTokens[1].trim();
 			sToUnit = sTokens[2].trim();
 
-			dbHelper mydbHelper = new dbHelper(context);
-			SQLiteDatabase mydB = mydbHelper.getReadableDatabase();
+			boolean lgLinkFound = false;
+			int i = 0;
 
-			boolean firsttime = false;
-			Cursor cursor = mydB.query(dBase.TABLE_NAME, null, dBase.COLUMN_NAME_FROMSYMBOL + "=?", new String[]
-			{ sFromUnit }, null, null, null, null);
-			if (cursor != null)
+			dbHelper mydbHelper = new dbHelper(this);
+
+			// List<Convs> convList = new ArrayList<Convs>();
+			// convList = mydbHelper.getAllConvs();
+			//
+			// for( Convs con:convList )
+			// {
+			// String FS = con.getFromSymbol();
+			// String TS = con.getToSymbol();
+			// }
+
+			Cursor cursor = mydbHelper.searchFrom(sFromUnit, null);
+//			if (cursor != null)
+//			{
+//				for (cursor.moveToFirst(); !cursor.isAfterLast(); cursor.moveToNext())
+//				{
+//					if (cursor.getString(dBase.NDEX_TOSYMBOL).equalsIgnoreCase(sToUnit))
+//					{
+//						Double output = Double.valueOf(sValue) * Double.valueOf(cursor.getString(dBase.NDEX_MULTIBY));
+//						tvOutput.setText(String.valueOf(output));
+//						lgLinkFound = true;
+//						break;
+//					}
+//				}
+//			}
+//
+//			if (!lgLinkFound)
+//			{
+//
+//				Cursor cursorend = mydbHelper.searchTo(sToUnit, null);
+//				if (cursor != null)
+//				{
+//					for (cursor.moveToFirst(); !cursor.isAfterLast(); cursor.moveToNext())
+//					{
+//						for (cursorend.moveToFirst(); !cursorend.isAfterLast(); cursorend.moveToNext())
+//						{
+//							if (cursor.getString(dBase.NDEX_TOSYMBOL).equalsIgnoreCase(cursorend.getString(dBase.NDEX_FROMSYMBOL)))
+//							{
+//								Double output = Double.valueOf(sValue) * Double.valueOf(cursor.getString(dBase.NDEX_MULTIBY))
+//										* Double.valueOf(cursorend.getString(dBase.NDEX_MULTIBY));
+//								tvOutput.setText(String.valueOf(output));
+//								lgLinkFound = true;
+//								break;
+//							}
+//						}
+//					}
+//				}
+//			}
+
+			if (!lgLinkFound)
 			{
+				outerloop:
 				for (cursor.moveToFirst(); !cursor.isAfterLast(); cursor.moveToNext())
 				{
-					if (cursor.getString(3).equalsIgnoreCase(sToUnit))
+					// Check to see if ToSymbol is sToUnit
+					if (cursor.getString(dBase.NDEX_TOSYMBOL).equalsIgnoreCase(sToUnit))
 					{
-						Double output = Double.valueOf(sValue) * Double.valueOf(cursor.getString(5));
+						Double output = Double.valueOf(sValue) * Double.valueOf(cursor.getString(dBase.NDEX_MULTIBY));
 						tvOutput.setText(String.valueOf(output));
-						firsttime = true;
-						break;
+						lgLinkFound = true;
+						break outerloop;
 					}
-				}
-			}
-			if (!firsttime)
-			{
-				boolean secondtime = false;
-				Cursor cursor2 = mydB.query(dBase.TABLE_NAME, null, dBase.COLUMN_NAME_TOSYMBOL + "=?", new String[]
-				{ sToUnit }, null, null, null, null);
-				if (cursor2 != null)
-				{
+					Cursor cursor2 = mydbHelper.searchFrom(cursor.getString(dBase.NDEX_TOSYMBOL), null);
 					for (cursor2.moveToFirst(); !cursor2.isAfterLast(); cursor2.moveToNext())
 					{
-						for (cursor.moveToFirst(); !cursor.isAfterLast(); cursor.moveToNext())
+						// Check to see if ToSymbol is sToUnit
+						if (cursor2.getString(dBase.NDEX_TOSYMBOL).equalsIgnoreCase(sToUnit))
 						{
-							if (cursor.getString(3).equalsIgnoreCase(cursor2.getString(1)))
+							Double output = Double.valueOf(sValue) * Double.valueOf(cursor.getString(dBase.NDEX_MULTIBY))
+									* Double.valueOf(cursor2.getString(dBase.NDEX_MULTIBY));
+							tvOutput.setText(String.valueOf(output));
+							lgLinkFound = true;
+							break outerloop;
+						}
+						Cursor cursor3 = mydbHelper.searchFrom(cursor2.getString(dBase.NDEX_TOSYMBOL), null);
+						for (cursor3.moveToFirst(); !cursor3.isAfterLast(); cursor3.moveToNext())
+						{
+							// Check to see if ToSymbol is sToUnit
+							if (cursor3.getString(dBase.NDEX_TOSYMBOL).equalsIgnoreCase(sToUnit))
 							{
-								Double output = Double.valueOf(sValue) * Double.valueOf(cursor.getString(5))*Double.valueOf(cursor2.getString(5));;
+								Double output = Double.valueOf(sValue) * Double.valueOf(cursor.getString(dBase.NDEX_MULTIBY))
+										* Double.valueOf(cursor2.getString(dBase.NDEX_MULTIBY)) * Double.valueOf(cursor3.getString(dBase.NDEX_MULTIBY));
 								tvOutput.setText(String.valueOf(output));
-								secondtime = true;
-								break;
+								lgLinkFound = true;
+								break outerloop;
+							}
+							Cursor cursor4 = mydbHelper.searchFrom(cursor3.getString(dBase.NDEX_TOSYMBOL), null);
+							for (cursor4.moveToFirst(); !cursor4.isAfterLast(); cursor4.moveToNext())
+							{
+								if (cursor4.getString(dBase.NDEX_TOSYMBOL).equalsIgnoreCase(sToUnit))
+								{
+									Double output = Double.valueOf(sValue) * Double.valueOf(cursor.getString(dBase.NDEX_MULTIBY))
+											* Double.valueOf(cursor2.getString(dBase.NDEX_MULTIBY)) * Double.valueOf(cursor3.getString(dBase.NDEX_MULTIBY))
+											* Double.valueOf(cursor4.getString(dBase.NDEX_MULTIBY));
+									tvOutput.setText(String.valueOf(output));
+									lgLinkFound = true;
+									break outerloop;
+								}
 							}
 						}
 					}
 				}
 			}
-
 		}
 		else
 		{

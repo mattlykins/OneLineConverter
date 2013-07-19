@@ -137,20 +137,21 @@ public class MainActivity extends Activity implements OnClickListener
 			{
 				boolean lgAddToList = true;
 				Convs conv = new Convs(cursor.getString(dBase.NDEX_ID), cursor.getString(dBase.NDEX_FROMSYMBOL), cursor.getString(dBase.NDEX_FROMTEXT),
-						cursor.getString(dBase.NDEX_TOSYMBOL), cursor.getString(dBase.NDEX_TOTEXT), cursor.getString(dBase.NDEX_MULTIBY));
-				Log.d("FERRET", cursor.getString(dBase.NDEX_ID) + " " + cursor.getString(dBase.NDEX_FROMSYMBOL) + " " + cursor.getString(dBase.NDEX_FROMTEXT)
-						+ " " + cursor.getString(dBase.NDEX_TOSYMBOL) + " " + cursor.getString(dBase.NDEX_TOTEXT) + " " + cursor.getString(dBase.NDEX_MULTIBY)
-						+ "\n");
-				for (int i : IDS)
-				{
-					if (i == Integer.parseInt(cursor.getString(dBase.NDEX_ID)))
-					{
-						lgAddToList = false;
-						break;
-					}
-				}
+						cursor.getString(dBase.NDEX_TOSYMBOL), cursor.getString(dBase.NDEX_TOTEXT), cursor.getString(dBase.NDEX_MULTIBY));				
+//				for (int i : IDS)
+//				{
+//					if (i == Integer.parseInt(cursor.getString(dBase.NDEX_ID)))
+//					{
+//						lgAddToList = false;
+//						break;
+//					}
+//				}
+				//Investigate IDS system - maybe remove
 				if (lgAddToList)
 				{
+					Log.d("FERRET", cursor.getString(dBase.NDEX_ID) + " " + cursor.getString(dBase.NDEX_FROMSYMBOL) + " " + cursor.getString(dBase.NDEX_FROMTEXT)
+							+ " " + cursor.getString(dBase.NDEX_TOSYMBOL) + " " + cursor.getString(dBase.NDEX_TOTEXT) + " " + cursor.getString(dBase.NDEX_MULTIBY)
+							+ "\n");
 					List1.add(conv);
 					int id = Integer.parseInt(cursor.getString(dBase.NDEX_ID));
 					IDS.add(id);
@@ -159,60 +160,6 @@ public class MainActivity extends Activity implements OnClickListener
 
 		}
 		return List1;
-	}
-
-	private double scanOne(String sToUnit, boolean lgLinkFound)
-	{
-		Cursor cursor = mydbHelper.searchFrom(sFromUnit, null);
-		if (cursor != null)
-		{
-			for (cursor.moveToFirst(); !cursor.isAfterLast(); cursor.moveToNext())
-			{
-				if (cursor.getString(dBase.NDEX_TOSYMBOL).equalsIgnoreCase(sToUnit))
-				{
-					lgLinkFound = true;
-					cursor.close();
-					return Double.valueOf(cursor.getString(dBase.NDEX_MULTIBY));
-				}
-			}
-		}
-		Cursor Bcursor = mydbHelper.searchTo(sFromUnit, null);
-		if (Bcursor != null)
-		{
-			for (Bcursor.moveToFirst(); !Bcursor.isAfterLast(); Bcursor.moveToNext())
-			{
-				if (Bcursor.getString(dBase.NDEX_FROMSYMBOL).equalsIgnoreCase(sToUnit))
-				{
-					lgLinkFound = true;
-					Bcursor.close();
-					return (1 / Double.valueOf(cursor.getString(dBase.NDEX_MULTIBY)));
-				}
-			}
-		}
-
-		return 0;
-	}
-
-	private double scanTwo(String sToUnit, boolean lgLinkFound)
-	{
-		Cursor cursor = mydbHelper.searchFrom(sFromUnit, null);
-		Cursor cursorend = mydbHelper.searchTo(sToUnit, null);
-		if (cursor != null && cursorend != null)
-		{
-			for (cursor.moveToFirst(); !cursor.isAfterLast(); cursor.moveToNext())
-			{
-				for (cursorend.moveToFirst(); !cursorend.isAfterLast(); cursorend.moveToNext())
-				{
-					if (cursor.getString(dBase.NDEX_TOSYMBOL).equalsIgnoreCase(cursorend.getString(dBase.NDEX_FROMSYMBOL)))
-					{
-						lgLinkFound = true;
-						return Double.valueOf(cursor.getString(dBase.NDEX_MULTIBY)) * Double.valueOf(cursorend.getString(dBase.NDEX_MULTIBY));
-
-					}
-				}
-			}
-		}
-		return 0;
 	}
 
 	private double junk(List<Integer> IDS)
@@ -226,6 +173,7 @@ public class MainActivity extends Activity implements OnClickListener
 		if (cursorFF != null)
 		{
 			FF = AddToList(cursorFF, IDS);
+			cursorFF.close();
 
 			// Check the array of convs to see if any of the dB To units equal
 			// the user entered To Unit
@@ -245,6 +193,7 @@ public class MainActivity extends Activity implements OnClickListener
 		if (cursorTT != null)
 		{
 			TT = AddToList(cursorTT, IDS);
+			cursorTT.close();
 
 			for (Convs L : FF)
 			{
@@ -268,6 +217,7 @@ public class MainActivity extends Activity implements OnClickListener
 			if (cursorFF2 != null)
 			{
 				FF2 = AddToList(cursorFF2, IDS);
+				cursorFF2.close();
 				for (Convs R : TT)
 				{
 					for (Convs L2 : FF2)
@@ -275,11 +225,11 @@ public class MainActivity extends Activity implements OnClickListener
 						if (L.getToSymbol().equals(L2.getFromSymbol()) && R.getFromSymbol().equals(L2.getToSymbol()))
 						{
 							Log.d("THREESTEP", L.getFromSymbol() + " " + L.getFromText() + " " + L.getToSymbol() + " " + L.getToText() + " " + L.getMultiBy()
-									+ "\n");
-							Log.d("THREESTEP", R.getFromSymbol() + " " + R.getFromText() + " " + R.getToSymbol() + " " + R.getToText() + " " + R.getMultiBy()
-									+ "\n");
+									+ "\n");							
 							Log.d("THREESTEP",
 									L2.getFromSymbol() + " " + L2.getFromText() + " " + L2.getToSymbol() + " " + L2.getToText() + " " + L2.getMultiBy() + "\n");
+							Log.d("THREESTEP", R.getFromSymbol() + " " + R.getFromText() + " " + R.getToSymbol() + " " + R.getToText() + " " + R.getMultiBy()
+									+ "\n");
 
 							return Double.parseDouble(L.getMultiBy()) * Double.parseDouble(R.getMultiBy()) * Double.parseDouble(L2.getMultiBy());
 						}
@@ -296,13 +246,15 @@ public class MainActivity extends Activity implements OnClickListener
 			if (cursorFF2 != null)
 			{
 				FF2 = AddToList(cursorFF2, IDS);
+				cursorFF2.close();
 				for (Convs R : TT)
 				{
 					List<Convs> TT2 = new ArrayList<Convs>();
-					Cursor cursorTT2 = mydbHelper.searchFrom(L.getToSymbol(), null);
+					Cursor cursorTT2 = mydbHelper.searchTo(R.getFromSymbol(), null);
 					if (cursorTT2 != null)
 					{
-						TT2 = AddToList(cursorFF2, IDS);
+						TT2 = AddToList(cursorTT2, IDS);
+						cursorTT2.close();
 						for (Convs L2 : FF2)
 						{
 							for (Convs R2 : TT2)
@@ -314,14 +266,14 @@ public class MainActivity extends Activity implements OnClickListener
 											L.getFromSymbol() + " " + L.getFromText() + " " + L.getToSymbol() + " " + L.getToText() + " " + L.getMultiBy()
 													+ "\n");
 									Log.d("FOURSTEP",
-											R.getFromSymbol() + " " + R.getFromText() + " " + R.getToSymbol() + " " + R.getToText() + " " + R.getMultiBy()
-													+ "\n");
-									Log.d("FOURSTEP",
 											L2.getFromSymbol() + " " + L2.getFromText() + " " + L2.getToSymbol() + " " + L2.getToText() + " " + L2.getMultiBy()
 													+ "\n");
 									Log.d("FOURSTEP",
 											R2.getFromSymbol() + " " + R2.getFromText() + " " + R2.getToSymbol() + " " + R2.getToText() + " " + R2.getMultiBy()
 													+ "\n");
+									Log.d("FOURSTEP",
+											R.getFromSymbol() + " " + R.getFromText() + " " + R.getToSymbol() + " " + R.getToText() + " " + R.getMultiBy()
+													+ "\n");									
 
 									return Double.parseDouble(L.getMultiBy()) * Double.parseDouble(R.getMultiBy()) * Double.parseDouble(L2.getMultiBy())
 											* Double.parseDouble(R2.getMultiBy());
@@ -341,20 +293,23 @@ public class MainActivity extends Activity implements OnClickListener
 			if (cursorFF2 != null)
 			{
 				FF2 = AddToList(cursorFF2, IDS);
+				cursorFF2.close();
 				for (Convs R : TT)
 				{
 					List<Convs> TT2 = new ArrayList<Convs>();
-					Cursor cursorTT2 = mydbHelper.searchFrom(L.getToSymbol(), null);
+					Cursor cursorTT2 = mydbHelper.searchTo(R.getFromSymbol(), null);
 					if (cursorTT2 != null)
 					{
-						TT2 = AddToList(cursorFF2, IDS);
+						TT2 = AddToList(cursorTT2, IDS);
+						cursorTT2.close();
 						for (Convs L2 : FF2)
 						{
 							List<Convs> FF3 = new ArrayList<Convs>();
-							Cursor cursorFF3 = mydbHelper.searchFrom(L.getToSymbol(), null);
+							Cursor cursorFF3 = mydbHelper.searchFrom(L2.getToSymbol(), null);
 							if (cursorFF3 != null)
 							{
 								FF3 = AddToList(cursorFF3, IDS);
+								cursorFF3.close();
 
 								for (Convs R2 : TT2)
 								{
@@ -366,14 +321,14 @@ public class MainActivity extends Activity implements OnClickListener
 										{
 											Log.d("FIVESTEP", L.getFromSymbol() + " " + L.getFromText() + " " + L.getToSymbol() + " " + L.getToText() + " "
 													+ L.getMultiBy() + "\n");
-											Log.d("FIVESTEP", R.getFromSymbol() + " " + R.getFromText() + " " + R.getToSymbol() + " " + R.getToText() + " "
-													+ R.getMultiBy() + "\n");
 											Log.d("FIVESTEP", L2.getFromSymbol() + " " + L2.getFromText() + " " + L2.getToSymbol() + " " + L2.getToText() + " "
 													+ L2.getMultiBy() + "\n");
 											Log.d("FIVESTEP", L3.getFromSymbol() + " " + L3.getFromText() + " " + L3.getToSymbol() + " " + L3.getToText() + " "
 													+ L3.getMultiBy() + "\n");
 											Log.d("FIVESTEP", R2.getFromSymbol() + " " + R2.getFromText() + " " + R2.getToSymbol() + " " + R2.getToText() + " "
 													+ R2.getMultiBy() + "\n");
+											Log.d("FIVESTEP", R.getFromSymbol() + " " + R.getFromText() + " " + R.getToSymbol() + " " + R.getToText() + " "
+													+ R.getMultiBy() + "\n");											
 
 											return Double.parseDouble(L.getMultiBy()) * Double.parseDouble(R.getMultiBy())
 													* Double.parseDouble(L2.getMultiBy()) * Double.parseDouble(R2.getMultiBy())

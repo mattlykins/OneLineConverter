@@ -79,6 +79,7 @@ public class dbHelper extends SQLiteOpenHelper
 	        if (cursor.moveToFirst()) {
 	            do {
 	                Convs conv = new Convs();
+	                conv.setID(cursor.getString(dBase.NDEX_ID));
 	                conv.setFromSymbol(cursor.getString(dBase.NDEX_FROMSYMBOL));
 	                conv.setFromText (cursor.getString(dBase.NDEX_FROMTEXT));
 	                conv.setToSymbol(cursor.getString(dBase.NDEX_TOSYMBOL));

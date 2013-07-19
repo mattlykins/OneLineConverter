@@ -18,6 +18,7 @@ public final class dbContract
 		public static final String COLUMN_NAME_TOTEXT = "totext";
 		public static final String COLUMN_NAME_MULTIBY = "multiby";
 		
+		public static final int NDEX_ID = 0;
 		public static final int NDEX_FROMSYMBOL = 1;
 		public static final int NDEX_FROMTEXT = 2;
 		public static final int NDEX_TOSYMBOL = 3;

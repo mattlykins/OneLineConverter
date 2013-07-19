@@ -77,8 +77,22 @@ public class AddToDB extends Activity implements OnClickListener
 					values.put(dBase.COLUMN_NAME_TOSYMBOL, tTS);
 					values.put(dBase.COLUMN_NAME_TOTEXT, tTT);
 					values.put(dBase.COLUMN_NAME_MULTIBY, tMB);
-					long newRowId = mydB.insert(dBase.TABLE_NAME, null, values);	
+					long newRowId = mydB.insert(dBase.TABLE_NAME, null, values);
 					
+					
+					//Set up the inverse conversion
+					Double dIMB = 1/Double.parseDouble(tMB);
+					String sIMB = String.valueOf(dIMB);
+					
+					
+					
+					ContentValues Ivalues = new ContentValues();
+					Ivalues.put(dBase.COLUMN_NAME_FROMSYMBOL, tTS);
+					Ivalues.put(dBase.COLUMN_NAME_FROMTEXT, tTT);
+					Ivalues.put(dBase.COLUMN_NAME_TOSYMBOL, tFS);
+					Ivalues.put(dBase.COLUMN_NAME_TOTEXT, tFT);
+					Ivalues.put(dBase.COLUMN_NAME_MULTIBY, sIMB);
+					long InewRowId = mydB.insert(dBase.TABLE_NAME, null, Ivalues);
 					
 					etFromSymbol.setText("");
 					etFromText.setText("");

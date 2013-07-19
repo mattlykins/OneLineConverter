@@ -2,7 +2,17 @@ package com.mattlykins.onelineconverter;
 
 public class Convs
 {
-	private String FromSymbol,FromText,ToSymbol,ToText,MultiBy;
+	private String ID,FromSymbol,FromText,ToSymbol,ToText,MultiBy;
+
+	public String getID()
+	{
+		return ID;
+	}
+
+	public void setID(String iD)
+	{
+		ID = iD;
+	}
 
 	public String getFromSymbol()
 	{
@@ -57,6 +67,7 @@ public class Convs
 	public Convs()
 	{
 		super();
+		ID = null;
 		FromSymbol = null;
 		FromText = null;
 		ToSymbol = null;
@@ -65,9 +76,10 @@ public class Convs
 		
 	}
 	
-	public Convs(String fromSymbol, String fromText, String toSymbol, String toText, String multiBy)
+	public Convs(String iD, String fromSymbol, String fromText, String toSymbol, String toText, String multiBy)
 	{
 		super();
+		ID = iD;
 		FromSymbol = fromSymbol;
 		FromText = fromText;
 		ToSymbol = toSymbol;

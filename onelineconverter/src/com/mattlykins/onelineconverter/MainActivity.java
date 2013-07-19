@@ -274,11 +274,114 @@ public class MainActivity extends Activity implements OnClickListener
 					{
 						if (L.getToSymbol().equals(L2.getFromSymbol()) && R.getFromSymbol().equals(L2.getToSymbol()))
 						{
-							Log.d("FERRET2", L.getFromSymbol() + " " + L.getFromText() + " " + L.getToSymbol() + " " + L.getToText() + " " + L.getMultiBy()	+ "\n");
-							Log.d("FERRET2", R.getFromSymbol() + " " + R.getFromText() + " " + R.getToSymbol() + " " + R.getToText() + " " + R.getMultiBy()	+ "\n");
-							Log.d("FERRET2", L2.getFromSymbol() + " " + L2.getFromText() + " " + L2.getToSymbol() + " " + L2.getToText() + " " + L2.getMultiBy() + "\n");
+							Log.d("THREESTEP", L.getFromSymbol() + " " + L.getFromText() + " " + L.getToSymbol() + " " + L.getToText() + " " + L.getMultiBy()
+									+ "\n");
+							Log.d("THREESTEP", R.getFromSymbol() + " " + R.getFromText() + " " + R.getToSymbol() + " " + R.getToText() + " " + R.getMultiBy()
+									+ "\n");
+							Log.d("THREESTEP",
+									L2.getFromSymbol() + " " + L2.getFromText() + " " + L2.getToSymbol() + " " + L2.getToText() + " " + L2.getMultiBy() + "\n");
 
 							return Double.parseDouble(L.getMultiBy()) * Double.parseDouble(R.getMultiBy()) * Double.parseDouble(L2.getMultiBy());
+						}
+					}
+				}
+			}
+		}
+
+		// The four step
+		for (Convs L : FF)
+		{
+			List<Convs> FF2 = new ArrayList<Convs>();
+			Cursor cursorFF2 = mydbHelper.searchFrom(L.getToSymbol(), null);
+			if (cursorFF2 != null)
+			{
+				FF2 = AddToList(cursorFF2, IDS);
+				for (Convs R : TT)
+				{
+					List<Convs> TT2 = new ArrayList<Convs>();
+					Cursor cursorTT2 = mydbHelper.searchFrom(L.getToSymbol(), null);
+					if (cursorTT2 != null)
+					{
+						TT2 = AddToList(cursorFF2, IDS);
+						for (Convs L2 : FF2)
+						{
+							for (Convs R2 : TT2)
+							{
+								if (L.getToSymbol().equals(L2.getFromSymbol()) && R.getFromSymbol().equals(R2.getToSymbol())
+										&& L2.getToSymbol().equals(R2.getFromSymbol()))
+								{
+									Log.d("FOURSTEP",
+											L.getFromSymbol() + " " + L.getFromText() + " " + L.getToSymbol() + " " + L.getToText() + " " + L.getMultiBy()
+													+ "\n");
+									Log.d("FOURSTEP",
+											R.getFromSymbol() + " " + R.getFromText() + " " + R.getToSymbol() + " " + R.getToText() + " " + R.getMultiBy()
+													+ "\n");
+									Log.d("FOURSTEP",
+											L2.getFromSymbol() + " " + L2.getFromText() + " " + L2.getToSymbol() + " " + L2.getToText() + " " + L2.getMultiBy()
+													+ "\n");
+									Log.d("FOURSTEP",
+											R2.getFromSymbol() + " " + R2.getFromText() + " " + R2.getToSymbol() + " " + R2.getToText() + " " + R2.getMultiBy()
+													+ "\n");
+
+									return Double.parseDouble(L.getMultiBy()) * Double.parseDouble(R.getMultiBy()) * Double.parseDouble(L2.getMultiBy())
+											* Double.parseDouble(R2.getMultiBy());
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+
+		// The Five Step
+		for (Convs L : FF)
+		{
+			List<Convs> FF2 = new ArrayList<Convs>();
+			Cursor cursorFF2 = mydbHelper.searchFrom(L.getToSymbol(), null);
+			if (cursorFF2 != null)
+			{
+				FF2 = AddToList(cursorFF2, IDS);
+				for (Convs R : TT)
+				{
+					List<Convs> TT2 = new ArrayList<Convs>();
+					Cursor cursorTT2 = mydbHelper.searchFrom(L.getToSymbol(), null);
+					if (cursorTT2 != null)
+					{
+						TT2 = AddToList(cursorFF2, IDS);
+						for (Convs L2 : FF2)
+						{
+							List<Convs> FF3 = new ArrayList<Convs>();
+							Cursor cursorFF3 = mydbHelper.searchFrom(L.getToSymbol(), null);
+							if (cursorFF3 != null)
+							{
+								FF3 = AddToList(cursorFF3, IDS);
+
+								for (Convs R2 : TT2)
+								{
+									for (Convs L3 : FF3)
+									{
+
+										if (L.getToSymbol().equals(L2.getFromSymbol()) && R.getFromSymbol().equals(R2.getToSymbol())
+												&& L2.getToSymbol().equals(L3.getFromSymbol()) && L3.getToSymbol().equals(R2.getFromSymbol()))
+										{
+											Log.d("FIVESTEP", L.getFromSymbol() + " " + L.getFromText() + " " + L.getToSymbol() + " " + L.getToText() + " "
+													+ L.getMultiBy() + "\n");
+											Log.d("FIVESTEP", R.getFromSymbol() + " " + R.getFromText() + " " + R.getToSymbol() + " " + R.getToText() + " "
+													+ R.getMultiBy() + "\n");
+											Log.d("FIVESTEP", L2.getFromSymbol() + " " + L2.getFromText() + " " + L2.getToSymbol() + " " + L2.getToText() + " "
+													+ L2.getMultiBy() + "\n");
+											Log.d("FIVESTEP", L3.getFromSymbol() + " " + L3.getFromText() + " " + L3.getToSymbol() + " " + L3.getToText() + " "
+													+ L3.getMultiBy() + "\n");
+											Log.d("FIVESTEP", R2.getFromSymbol() + " " + R2.getFromText() + " " + R2.getToSymbol() + " " + R2.getToText() + " "
+													+ R2.getMultiBy() + "\n");
+
+											return Double.parseDouble(L.getMultiBy()) * Double.parseDouble(R.getMultiBy())
+													* Double.parseDouble(L2.getMultiBy()) * Double.parseDouble(R2.getMultiBy())
+													* Double.parseDouble(L3.getMultiBy());
+										}
+									}
+								}
+							}
 						}
 					}
 				}

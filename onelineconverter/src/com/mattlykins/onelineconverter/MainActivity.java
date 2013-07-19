@@ -270,22 +270,15 @@ public class MainActivity extends Activity implements OnClickListener
 				FF2 = AddToList(cursorFF2, IDS);
 				for (Convs R : TT)
 				{
-					List<Convs> TT2 = new ArrayList<Convs>();
-					Cursor cursorTT2 = mydbHelper.searchTo(R.getFromSymbol(), null);
-					if (cursorTT2 != null)
+					for (Convs L2 : FF2)
 					{
-						TT2 = AddToList(cursorTT2, IDS);
-						for( Convs L2: FF2 )
+						if (L.getToSymbol().equals(L2.getFromSymbol()) && R.getFromSymbol().equals(L2.getToSymbol()))
 						{
-							for(Convs R2: TT2 )
-							{
-								if( L.getToSymbol().equals(L2.getFromSymbol()) && R.getFromSymbol().equals(R2.getToSymbol()))
-								{
-									return Double.parseDouble(L.getMultiBy()) * Double.parseDouble(R.getMultiBy())*
-											Double.parseDouble(L2.getMultiBy());
-									
-								}
-							}
+							Log.d("FERRET2", L.getFromSymbol() + " " + L.getFromText() + " " + L.getToSymbol() + " " + L.getToText() + " " + L.getMultiBy()	+ "\n");
+							Log.d("FERRET2", R.getFromSymbol() + " " + R.getFromText() + " " + R.getToSymbol() + " " + R.getToText() + " " + R.getMultiBy()	+ "\n");
+							Log.d("FERRET2", L2.getFromSymbol() + " " + L2.getFromText() + " " + L2.getToSymbol() + " " + L2.getToText() + " " + L2.getMultiBy() + "\n");
+
+							return Double.parseDouble(L.getMultiBy()) * Double.parseDouble(R.getMultiBy()) * Double.parseDouble(L2.getMultiBy());
 						}
 					}
 				}

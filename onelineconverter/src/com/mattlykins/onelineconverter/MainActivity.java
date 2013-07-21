@@ -2,6 +2,7 @@ package com.mattlykins.onelineconverter;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.StringTokenizer;
 
 import com.mattlykins.onelineconverter.dbContract.dBase;
 
@@ -71,7 +72,7 @@ public class MainActivity extends Activity implements OnClickListener
 
 	@Override
 	public void onClick(View v)
-	{
+	{	
 		sEntry = etTextEntry.getText().toString();
 		String[] sTokens = sEntry.split(" ");
 
@@ -80,52 +81,107 @@ public class MainActivity extends Activity implements OnClickListener
 			sValue = sTokens[0].trim();
 			sFromUnit = sTokens[1].trim();
 			sToUnit = sTokens[2].trim();
+			
+			//Split From Unit into tokens
+			StringTokenizer tokFrom = new StringTokenizer(sFromUnit, "[*/]", true);
+			String[] FromTokens = new String[tokFrom.countTokens()+1];
+			int FromDex = 0;		
+			
+			
+			while(tokFrom.hasMoreElements())
+			{
+				FromTokens[FromDex] = tokFrom.nextToken();
+				Log.d("TOKENIZER",FromTokens[FromDex]+ " " + String.valueOf(tokFrom.countTokens()) + "\n");
+				FromDex += 1;
+			}
+			
+			//Split To Unit into tokens
+			StringTokenizer tokTo = new StringTokenizer(sToUnit, "[*/]", true);
+			String[] ToTokens = new String[tokTo.countTokens()+1];
+			int ToDex = 0;
+			
+			while(tokTo.hasMoreElements())
+			{
+				ToTokens[ToDex] = tokTo.nextToken();
+				Log.d("TOKENIZER",ToTokens[ToDex]+ " " + String.valueOf(tokTo.countTokens()) + "\n");
+				ToDex += 1;
+			}				
 
 			double Value = Double.valueOf(sValue);
-
-			boolean lgLinkFound = false;
-
-			// Verify the unit conversion is potentially possible
-			Cursor testFF = mydbHelper.searchFrom(sFromUnit, null);
-			Cursor testTF = mydbHelper.searchTo(sFromUnit, null);
-			if (testFF == null && testTF == null)
-			{
-				Toast toast = Toast.makeText(this, "Invalid From Unit", Toast.LENGTH_SHORT);
-				toast.show();
-				return;
+			
+			
+			
+			//Run conversion on each part of the From Unit
+			Double TotalConvFactor = 1.0;
+			
+			//Verify dimensional compatibility
+			if( FromDex == ToDex )
+			{				
+				for( int j = 0; j < FromDex; j++ )
+				{
+					if( !FromTokens[j].equals("*") && !FromTokens[j].equals("/")
+							&& !ToTokens[j].equals("*") && !ToTokens[j].equals("/"))
+					{
+						//Call conversion and return conversion factor
+						
+						Log.d("FERRET","Calling junkwrapper with " + sFromUnit + " " + sToUnit + "\n");
+						Double result =	junkwrapper(FromTokens[j],ToTokens[j]);
+						Log.d("FERRET","Junkwrapper returned " + result + "\n");
+						
+						if( j != 0 && FromTokens[j-1].equals("/") && ToTokens[j-1].equals("/"))
+						{
+							Log.d("FERRET","TotalConvFactor = " + TotalConvFactor + "  result=" + result + "\n");
+							TotalConvFactor /= result;
+						}
+						else
+						{
+							TotalConvFactor *= result;
+						}
+						
+					}
+				}				
 			}
-
-			Cursor testFT = mydbHelper.searchFrom(sToUnit, null);
-			Cursor testTT = mydbHelper.searchTo(sToUnit, null);
-			if (testFT == null && testTT == null)
+			else
 			{
-				Toast toast = Toast.makeText(this, "Invalid To Unit", Toast.LENGTH_SHORT);
-				toast.show();
-				return;
+				//Bad Stuff
 			}
-
-			List<Integer> IDS = new ArrayList<Integer>();
-
-			Double factor = junk(IDS);
-
-			Double ConvertedValue = factor * Double.parseDouble(sValue);
-
+			
+			String ConvertedValue = String.valueOf(Double.parseDouble(sValue)*TotalConvFactor);
 			tvOutput.setText(ConvertedValue + "");
-
-			String out = "FERRET: ";
-			for (int i : IDS)
-			{
-				out = out + i + " ";
-			}
-			Toast toast = Toast.makeText(this, out, Toast.LENGTH_LONG);
-			toast.show();
-
 		}
 		else
 		{
 
 		}
 
+	}
+	
+	private double junkwrapper(String sFromUnit,String sToUnit)
+	{
+		// Verify the unit conversion is potentially possible
+		Cursor testFF = mydbHelper.searchFrom(sFromUnit, null);
+		Cursor testTF = mydbHelper.searchTo(sFromUnit, null);
+		if (testFF == null && testTF == null)
+		{
+			Toast toast = Toast.makeText(this, "Invalid From Unit", Toast.LENGTH_SHORT);
+			toast.show();
+			return 0;
+		}
+
+		Cursor testFT = mydbHelper.searchFrom(sToUnit, null);
+		Cursor testTT = mydbHelper.searchTo(sToUnit, null);
+		if (testFT == null && testTT == null)
+		{
+			Toast toast = Toast.makeText(this, "Invalid To Unit", Toast.LENGTH_SHORT);
+			toast.show();
+			return 0;
+		}
+
+		List<Integer> IDS = new ArrayList<Integer>();
+		
+		
+		Log.d("FERRET","Calling junk with " + sFromUnit + " " + sToUnit + "\n");
+		return(junk(sFromUnit,sToUnit,IDS));	
 	}
 
 	private List<Convs> AddToList(Cursor cursor, List<Integer> IDS)
@@ -162,7 +218,7 @@ public class MainActivity extends Activity implements OnClickListener
 		return List1;
 	}
 
-	private double junk(List<Integer> IDS)
+	private double junk(String sFromUnit, String sToUnit, List<Integer> IDS)
 	{
 		// List<Integer> IDS = new ArrayList<Integer>();
 

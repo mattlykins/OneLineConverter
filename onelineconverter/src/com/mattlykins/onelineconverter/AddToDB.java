@@ -17,7 +17,7 @@ public class AddToDB extends Activity implements OnClickListener
 {
 
 	EditText etFromSymbol, etFromText, etToSymbol, etToText, etMultiBy;
-	Button bSubmit;
+	Button bSubmit,bE;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState)
@@ -31,8 +31,10 @@ public class AddToDB extends Activity implements OnClickListener
 		etToText = (EditText) findViewById(R.id.etToText);
 		etMultiBy = (EditText) findViewById(R.id.etMultiBy);
 		bSubmit = (Button) findViewById(R.id.bSubmit);
+		bE = (Button) findViewById(R.id.bE);
 
 		bSubmit.setOnClickListener(this);
+		bE.setOnClickListener(this);
 
 	}
 
@@ -76,7 +78,7 @@ public class AddToDB extends Activity implements OnClickListener
 					values.put(dBase.COLUMN_NAME_FROMTEXT, tFT);
 					values.put(dBase.COLUMN_NAME_TOSYMBOL, tTS);
 					values.put(dBase.COLUMN_NAME_TOTEXT, tTT);
-					values.put(dBase.COLUMN_NAME_MULTIBY, tMB);
+					values.put(dBase.COLUMN_NAME_MULTIBY, String.valueOf(Double.parseDouble(tMB)));
 					long newRowId = mydB.insert(dBase.TABLE_NAME, null, values);
 					
 					
@@ -101,6 +103,9 @@ public class AddToDB extends Activity implements OnClickListener
 					etMultiBy.setText("");
 					
 				}
+				break;
+			case R.id.bE:
+				etMultiBy.setText(etMultiBy.getText() + "E");
 				break;
 		}
 

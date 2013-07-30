@@ -66,6 +66,11 @@ public class MainActivity extends Activity implements OnClickListener
 				Intent intent = new Intent(this, AddToDB.class);
 				startActivity(intent);
 				return true;
+				
+			case R.id.action_viewdb:
+				Intent intent1 = new Intent(this, ViewDB.class);
+				startActivity(intent1);
+				return true;
 		}
 		return super.onOptionsItemSelected(item);
 	}

@@ -38,7 +38,7 @@ public class dbHelper extends SQLiteOpenHelper
 
 		return query(selection, selectionArgs, columns);
 	}
-	
+
 	public Cursor searchTo(String sQuery, String[] columns)
 	{
 		String selection = dBase.COLUMN_NAME_TOSYMBOL + "=?";
@@ -52,8 +52,8 @@ public class dbHelper extends SQLiteOpenHelper
 	{
 
 		SQLiteDatabase db = this.getReadableDatabase();
-		
-		Cursor cursor = db.query(dBase.TABLE_NAME,columns, selection, selectionArgs, null, null, null);
+
+		Cursor cursor = db.query(dBase.TABLE_NAME, columns, selection, selectionArgs, null, null, null);
 
 		if (cursor == null)
 		{
@@ -67,31 +67,43 @@ public class dbHelper extends SQLiteOpenHelper
 		return cursor;
 	}
 	
-	  public List<Convs> getAllConvs() {
-	        List<Convs> convList = new ArrayList<Convs>();
-	        // Select All Query
-	        String selectQuery = "SELECT  * FROM " + dBase.TABLE_NAME;
-	 
-	        SQLiteDatabase db = this.getWritableDatabase();
-	        Cursor cursor = db.rawQuery(selectQuery, null);
-	 
-	        // looping through all rows and adding to list
-	        if (cursor.moveToFirst()) {
-	            do {
-	                Convs conv = new Convs();
-	                conv.setID(cursor.getString(dBase.NDEX_ID));
-	                conv.setFromSymbol(cursor.getString(dBase.NDEX_FROMSYMBOL));
-	                conv.setFromText (cursor.getString(dBase.NDEX_FROMTEXT));
-	                conv.setToSymbol(cursor.getString(dBase.NDEX_TOSYMBOL));
-	                conv.setToText(cursor.getString(dBase.NDEX_TOTEXT));
-	                conv.setMultiBy(cursor.getString(dBase.NDEX_MULTIBY));
-	                convList.add(conv);
-	            } while (cursor.moveToNext());
-	        }
-	 
-	        // return conv list
-	        return convList;
-	    }
+	public Cursor GetAllRows()
+	{
+		SQLiteDatabase db = this.getReadableDatabase();		
+		String selectQuery = "SELECT  * FROM " + dBase.TABLE_NAME;		
+		Cursor cursor = db.rawQuery(selectQuery, null);		
+		return cursor;
+	}
+
+	public List<Convs> getAllConvs()
+	{
+		List<Convs> convList = new ArrayList<Convs>();
+		// Select All Query
+		String selectQuery = "SELECT  * FROM " + dBase.TABLE_NAME;
+
+		SQLiteDatabase db = this.getWritableDatabase();
+		Cursor cursor = db.rawQuery(selectQuery, null);
+
+		// looping through all rows and adding to list
+		if (cursor.moveToFirst())
+		{
+			do
+			{
+				Convs conv = new Convs();
+				conv.setID(cursor.getString(dBase.NDEX_ID));
+				conv.setFromSymbol(cursor.getString(dBase.NDEX_FROMSYMBOL));
+				conv.setFromText(cursor.getString(dBase.NDEX_FROMTEXT));
+				conv.setToSymbol(cursor.getString(dBase.NDEX_TOSYMBOL));
+				conv.setToText(cursor.getString(dBase.NDEX_TOTEXT));
+				conv.setMultiBy(cursor.getString(dBase.NDEX_MULTIBY));
+				convList.add(conv);
+			}
+			while (cursor.moveToNext());
+		}
+
+		// return conv list
+		return convList;
+	}
 
 	@Override
 	public void onCreate(SQLiteDatabase db)

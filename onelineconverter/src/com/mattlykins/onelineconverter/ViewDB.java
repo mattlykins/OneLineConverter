@@ -1,5 +1,7 @@
 package com.mattlykins.onelineconverter;
 
+import com.mattlykins.onelineconverter.dbContract.dBase;
+
 import android.os.Bundle;
 import android.app.Activity;
 import android.content.Context;
@@ -21,12 +23,12 @@ public class ViewDB extends Activity
 		context = this;
 		list = (ListView)findViewById(R.id.list);
 		
-		String[] arrayColumns = new String[]{"From","To","MultiplyBy"};
+		String[] arrayColumns = new String[]{dBase.COLUMN_NAME_FROMSYMBOL,dBase.COLUMN_NAME_TOSYMBOL,dBase.COLUMN_NAME_MULTIBY};
 		int[] arrayViewIDs = new int[]{R.id.tvListFrom,R.id.tvListTo,R.id.tvListMultiplyBy};
 		
 		dbHelper mydbHelper = new dbHelper(this);
 		
-		Cursor cursor = mydbHelper.searchFrom("m", null);
+		Cursor cursor = mydbHelper.GetAllRows();
 		
 		SimpleCursorAdapter adapter = new SimpleCursorAdapter(this, R.layout.list_row, cursor, arrayColumns, arrayViewIDs,SimpleCursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER);
         list.setAdapter(adapter);

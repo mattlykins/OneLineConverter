@@ -5,6 +5,8 @@ import com.mattlykins.onelineconverter.dbContract.dBase;
 import android.os.Bundle;
 import android.app.Activity;
 import android.content.ContentValues;
+import android.content.Intent;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.view.Menu;
 import android.view.View;
@@ -18,12 +20,24 @@ public class AddToDB extends Activity implements OnClickListener
 
 	EditText etFromSymbol, etFromText, etToSymbol, etToText, etMultiBy;
 	Button bSubmit,bE;
+	Boolean lgEdit;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState)
 	{
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_add_to_db);
+		setContentView(R.layout.activity_add_to_db);		
+		
+		Bundle extras = getIntent().getExtras();
+		if( extras == null)
+		{
+			lgEdit = false;
+		}
+		else
+		{
+			lgEdit = true;	
+			Cursor c = (Cursor) extras.get("cursor")
+		}
 
 		etFromSymbol = (EditText) findViewById(R.id.etFromSymbol);
 		etFromText = (EditText) findViewById(R.id.etFromText);

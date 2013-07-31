@@ -4,11 +4,17 @@ import com.mattlykins.onelineconverter.dbContract.dBase;
 
 import android.os.Bundle;
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.database.Cursor;
 import android.view.Menu;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
+import android.widget.TextView;
 
 public class ViewDB extends Activity
 {
@@ -32,6 +38,34 @@ public class ViewDB extends Activity
 		
 		SimpleCursorAdapter adapter = new SimpleCursorAdapter(this, R.layout.list_row, cursor, arrayColumns, arrayViewIDs,SimpleCursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER);
         list.setAdapter(adapter);
+        
+        list.setOnItemClickListener(new OnItemClickListener()
+		{
+        	public void onItemClick(AdapterView<?> arg0, View arg1, int arg2, long arg3)
+        	{
+        		        		
+        		Cursor c = (Cursor) arg0.getItemAtPosition(arg2);
+        		
+        		String sFrom = c.getString(dBase.NDEX_FROMSYMBOL);
+        		String sTo = c.getString(dBase.NDEX_TOSYMBOL);
+        		String sMultiBy = c.getString(dBase.NDEX_MULTIBY);
+        		
+        		AlertDialog dialog = new AlertDialog.Builder(context).create();
+                dialog.setTitle("Conversion");
+                dialog.setIcon(android.R.drawable.ic_dialog_info);
+                dialog.setMessage("From " + sFrom + " To " + sTo + " Multiply By " + sMultiBy);
+                dialog.setButton(DialogInterface.BUTTON_POSITIVE, "OK",
+                        new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which)
+                    {
+                   
+                            dialog.dismiss();
+                            return;
+                }   
+                });
+                dialog.show();
+        	}
+		});
 	}
 
 	@Override
@@ -41,5 +75,6 @@ public class ViewDB extends Activity
 		getMenuInflater().inflate(R.menu.view_db, menu);
 		return true;
 	}
+	
 
 }

@@ -79,10 +79,7 @@ public class dbHelper extends SQLiteOpenHelper
 	{
 		List<Convs> convList = new ArrayList<Convs>();
 		// Select All Query
-		String selectQuery = "SELECT  * FROM " + dBase.TABLE_NAME;
-
-		SQLiteDatabase db = this.getWritableDatabase();
-		Cursor cursor = db.rawQuery(selectQuery, null);
+		Cursor cursor = GetAllRows();
 
 		// looping through all rows and adding to list
 		if (cursor.moveToFirst())

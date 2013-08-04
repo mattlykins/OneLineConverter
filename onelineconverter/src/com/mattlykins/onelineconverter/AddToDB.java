@@ -1,5 +1,7 @@
 package com.mattlykins.onelineconverter;
 
+import java.text.DecimalFormat;
+
 import com.mattlykins.onelineconverter.dbContract.dBase;
 
 import android.os.Bundle;
@@ -98,6 +100,8 @@ public class AddToDB extends Activity implements OnClickListener
 				}
 				else
 				{
+					DecimalFormat dfSigFig = new DecimalFormat("0.####E0");
+					
 					if (lgEdit)
 					{
 						dbHelper mydbHelper = new dbHelper(this);
@@ -107,25 +111,32 @@ public class AddToDB extends Activity implements OnClickListener
 						sTo = etToSymbol.getText().toString();
 						sToText = etToText.getText().toString();
 						sMultiBy = etMultiBy.getText().toString();
-						mydbHelper.Update_ByID(UpdateID, sFrom, sFromText, sTo, sToText, sMultiBy);						
+						
+						//Set the format
+						String newsMultiBy = dfSigFig.format(Double.parseDouble(sMultiBy));
+						
+						
+						mydbHelper.Update_ByID(UpdateID, sFrom, sFromText, sTo, sToText, newsMultiBy);						
 					}
 					else
 					{
 
 						dbHelper mydbHelper = new dbHelper(this);
 						SQLiteDatabase mydB = mydbHelper.getWritableDatabase();
+						
+						String newsMultiBy = dfSigFig.format(Double.parseDouble(tMB));
 
 						ContentValues values = new ContentValues();
 						values.put(dBase.COLUMN_NAME_FROMSYMBOL, tFS);
 						values.put(dBase.COLUMN_NAME_FROMTEXT, tFT);
 						values.put(dBase.COLUMN_NAME_TOSYMBOL, tTS);
 						values.put(dBase.COLUMN_NAME_TOTEXT, tTT);
-						values.put(dBase.COLUMN_NAME_MULTIBY, String.valueOf(Double.parseDouble(tMB)));
+						values.put(dBase.COLUMN_NAME_MULTIBY, newsMultiBy);
 						long newRowId = mydB.insert(dBase.TABLE_NAME, null, values);
 
 						// Set up the inverse conversion
 						Double dIMB = 1 / Double.parseDouble(tMB);
-						String sIMB = String.valueOf(dIMB);
+						String sIMB = dfSigFig.format(dIMB);
 
 						ContentValues Ivalues = new ContentValues();
 						Ivalues.put(dBase.COLUMN_NAME_FROMSYMBOL, tTS);

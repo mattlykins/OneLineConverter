@@ -11,6 +11,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.database.sqlite.SQLiteQueryBuilder;
+import android.util.Log;
 
 public class dbHelper extends SQLiteOpenHelper
 {
@@ -25,6 +26,7 @@ public class dbHelper extends SQLiteOpenHelper
 			+ TEXT_TYPE + COMMA_SEP + dBase.COLUMN_NAME_TOTEXT + TEXT_TYPE + COMMA_SEP + dBase.COLUMN_NAME_MULTIBY + TEXT_TYPE + " )";
 
 	private static final String SQL_DELETE_ENTRIES = "DROP TABLE IF EXISTS " + dBase.TABLE_NAME;
+	private static final String TAG = "TAG_DATABASE_OPERATION";
 
 	public dbHelper(Context context)
 	{
@@ -76,6 +78,12 @@ public class dbHelper extends SQLiteOpenHelper
 		return cursor;
 	}
 	
+	public void Delete_ByID(int id)
+	{
+		SQLiteDatabase db = this.getWritableDatabase();
+		db.delete(dBase.TABLE_NAME, dBase._ID+"="+id, null);
+	}
+	
 	public void Update_ByID(int id, String sFrom, String sFromText, String sTo, String sToText, String sMultiBy)
 	{
 		SQLiteDatabase db = this.getWritableDatabase();
@@ -125,7 +133,9 @@ public class dbHelper extends SQLiteOpenHelper
 	@Override
 	public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion)
 	{
-
+		Log.i(TAG, "Upgrading database from version " + oldVersion
+	              + " to "
+	              + newVersion + ", which will destroy all old data");
 	}
 
 }

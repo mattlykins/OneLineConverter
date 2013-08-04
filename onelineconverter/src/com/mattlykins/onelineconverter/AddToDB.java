@@ -19,24 +19,26 @@ public class AddToDB extends Activity implements OnClickListener
 {
 
 	EditText etFromSymbol, etFromText, etToSymbol, etToText, etMultiBy;
-	Button bSubmit,bE;
+	Button bSubmit, bE;
 	Boolean lgEdit;
+	int UpdateID;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState)
 	{
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_add_to_db);		
-		
+		setContentView(R.layout.activity_add_to_db);
+
 		Bundle extras = getIntent().getExtras();
-		if( extras == null)
+		if (extras == null)
 		{
 			lgEdit = false;
+			UpdateID = 0;
 		}
 		else
 		{
-			lgEdit = true;	
-			Cursor c = (Cursor) extras.get("cursor")
+			lgEdit = true;
+			UpdateID = extras.getInt("index");
 		}
 
 		etFromSymbol = (EditText) findViewById(R.id.etFromSymbol);
@@ -49,6 +51,17 @@ public class AddToDB extends Activity implements OnClickListener
 
 		bSubmit.setOnClickListener(this);
 		bE.setOnClickListener(this);
+
+		// If extras exist, plug in the text values
+		if (lgEdit)
+		{
+			etFromSymbol.setText(extras.getString("sFrom"));
+			etFromText.setText(extras.getString("sFromText"));
+			etToSymbol.setText(extras.getString("sTo"));
+			etToText.setText(extras.getString("sFromText"));
+			etMultiBy.setText(extras.getString("sMultiBy"));
+			
+		}
 
 	}
 
@@ -66,56 +79,69 @@ public class AddToDB extends Activity implements OnClickListener
 		switch (v.getId())
 		{
 			case R.id.bSubmit:
-				String tFS,tFT,tTS,tTT,tMB;
+				String tFS,
+				tFT,
+				tTS,
+				tTT,
+				tMB;
 				tFS = etFromSymbol.getText().toString();
 				tFT = etFromText.getText().toString();
 				tTS = etToSymbol.getText().toString();
 				tTT = etToText.getText().toString();
 				tMB = etMultiBy.getText().toString();
-				
-				if( tFS.equals(null) || tFS.equals("") ||
-					tFT.equals(null) || tFT.equals("") ||
-					tTS.equals(null) || tTS.equals("") ||
-					tTT.equals(null) || tTT.equals("") ||
-					tMB.equals(null) || tMB.equals("") )
+
+				if (tFS.equals(null) || tFS.equals("") || tFT.equals(null) || tFT.equals("") || tTS.equals(null) || tTS.equals("") || tTT.equals(null)
+						|| tTT.equals("") || tMB.equals(null) || tMB.equals(""))
 				{
 					Toast toast = Toast.makeText(this, "Fill in all blanks", Toast.LENGTH_LONG);
-					toast.show();					
+					toast.show();
 				}
 				else
 				{
-					dbHelper mydbHelper = new dbHelper(this);
-					SQLiteDatabase mydB = mydbHelper.getWritableDatabase();
+					if (lgEdit)
+					{
+						dbHelper mydbHelper = new dbHelper(this);
+						String sFrom, sFromText, sTo, sToText, sMultiBy;
+						sFrom = etFromSymbol.getText().toString();
+						sFromText = etFromText.getText().toString();
+						sTo = etToSymbol.getText().toString();
+						sToText = etToText.getText().toString();
+						sMultiBy = etMultiBy.getText().toString();
+						mydbHelper.Update_ByID(UpdateID, sFrom, sFromText, sTo, sToText, sMultiBy);						
+					}
+					else
+					{
 
-					ContentValues values = new ContentValues();
-					values.put(dBase.COLUMN_NAME_FROMSYMBOL, tFS);
-					values.put(dBase.COLUMN_NAME_FROMTEXT, tFT);
-					values.put(dBase.COLUMN_NAME_TOSYMBOL, tTS);
-					values.put(dBase.COLUMN_NAME_TOTEXT, tTT);
-					values.put(dBase.COLUMN_NAME_MULTIBY, String.valueOf(Double.parseDouble(tMB)));
-					long newRowId = mydB.insert(dBase.TABLE_NAME, null, values);
-					
-					
-					//Set up the inverse conversion
-					Double dIMB = 1/Double.parseDouble(tMB);
-					String sIMB = String.valueOf(dIMB);
-					
-					
-					
-					ContentValues Ivalues = new ContentValues();
-					Ivalues.put(dBase.COLUMN_NAME_FROMSYMBOL, tTS);
-					Ivalues.put(dBase.COLUMN_NAME_FROMTEXT, tTT);
-					Ivalues.put(dBase.COLUMN_NAME_TOSYMBOL, tFS);
-					Ivalues.put(dBase.COLUMN_NAME_TOTEXT, tFT);
-					Ivalues.put(dBase.COLUMN_NAME_MULTIBY, sIMB);
-					long InewRowId = mydB.insert(dBase.TABLE_NAME, null, Ivalues);
-					
-					etFromSymbol.setText("");
-					etFromText.setText("");
-					etToSymbol.setText("");
-					etToText.setText("");
-					etMultiBy.setText("");
-					
+						dbHelper mydbHelper = new dbHelper(this);
+						SQLiteDatabase mydB = mydbHelper.getWritableDatabase();
+
+						ContentValues values = new ContentValues();
+						values.put(dBase.COLUMN_NAME_FROMSYMBOL, tFS);
+						values.put(dBase.COLUMN_NAME_FROMTEXT, tFT);
+						values.put(dBase.COLUMN_NAME_TOSYMBOL, tTS);
+						values.put(dBase.COLUMN_NAME_TOTEXT, tTT);
+						values.put(dBase.COLUMN_NAME_MULTIBY, String.valueOf(Double.parseDouble(tMB)));
+						long newRowId = mydB.insert(dBase.TABLE_NAME, null, values);
+
+						// Set up the inverse conversion
+						Double dIMB = 1 / Double.parseDouble(tMB);
+						String sIMB = String.valueOf(dIMB);
+
+						ContentValues Ivalues = new ContentValues();
+						Ivalues.put(dBase.COLUMN_NAME_FROMSYMBOL, tTS);
+						Ivalues.put(dBase.COLUMN_NAME_FROMTEXT, tTT);
+						Ivalues.put(dBase.COLUMN_NAME_TOSYMBOL, tFS);
+						Ivalues.put(dBase.COLUMN_NAME_TOTEXT, tFT);
+						Ivalues.put(dBase.COLUMN_NAME_MULTIBY, sIMB);
+						long InewRowId = mydB.insert(dBase.TABLE_NAME, null, Ivalues);
+
+						etFromSymbol.setText("");
+						etFromText.setText("");
+						etToSymbol.setText("");
+						etToText.setText("");
+						etMultiBy.setText("");
+					}
+
 				}
 				break;
 			case R.id.bE:

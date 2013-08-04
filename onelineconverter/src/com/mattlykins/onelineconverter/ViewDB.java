@@ -7,6 +7,7 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.database.Cursor;
 import android.view.Menu;
 import android.view.View;
@@ -44,26 +45,40 @@ public class ViewDB extends Activity
         	public void onItemClick(AdapterView<?> arg0, View arg1, int arg2, long arg3)
         	{
         		        		
-        		Cursor c = (Cursor) arg0.getItemAtPosition(arg2);
+        		Cursor c = (Cursor) arg0.getItemAtPosition(arg2);        		
+        		Intent intent = new Intent(context, AddToDB.class);
         		
+        		
+        		int index = c.getInt(dBase.NDEX_ID);
         		String sFrom = c.getString(dBase.NDEX_FROMSYMBOL);
+        		String sFromText = c.getString(dBase.NDEX_FROMTEXT);
         		String sTo = c.getString(dBase.NDEX_TOSYMBOL);
+        		String sToText = c.getString(dBase.NDEX_TOTEXT);
         		String sMultiBy = c.getString(dBase.NDEX_MULTIBY);
         		
-        		AlertDialog dialog = new AlertDialog.Builder(context).create();
-                dialog.setTitle("Conversion");
-                dialog.setIcon(android.R.drawable.ic_dialog_info);
-                dialog.setMessage("From " + sFrom + " To " + sTo + " Multiply By " + sMultiBy);
-                dialog.setButton(DialogInterface.BUTTON_POSITIVE, "OK",
-                        new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int which)
-                    {
-                   
-                            dialog.dismiss();
-                            return;
-                }   
-                });
-                dialog.show();
+        		intent.putExtra("index", index);
+        		intent.putExtra("sFrom", sFrom);
+        		intent.putExtra("sFromText", sFromText);
+        		intent.putExtra("sTo", sTo);
+        		intent.putExtra("sToText", sToText);
+        		intent.putExtra("sMultiBy", sMultiBy);
+        		
+        		startActivity(intent);
+        		
+//        		AlertDialog dialog = new AlertDialog.Builder(context).create();
+//                dialog.setTitle("Conversion");
+//                dialog.setIcon(android.R.drawable.ic_dialog_info);
+//                dialog.setMessage("From " + sFrom + " To " + sTo + " Multiply By " + sMultiBy);
+//                dialog.setButton(DialogInterface.BUTTON_POSITIVE, "OK",
+//                        new DialogInterface.OnClickListener() {
+//                    public void onClick(DialogInterface dialog, int which)
+//                    {
+//                   
+//                            dialog.dismiss();
+//                            return;
+//                }   
+//                });
+//                dialog.show();
         	}
 		});
 	}

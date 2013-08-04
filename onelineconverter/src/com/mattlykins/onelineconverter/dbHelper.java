@@ -5,6 +5,7 @@ import java.util.List;
 
 import com.mattlykins.onelineconverter.dbContract.dBase;
 
+import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -73,6 +74,19 @@ public class dbHelper extends SQLiteOpenHelper
 		String selectQuery = "SELECT  * FROM " + dBase.TABLE_NAME;		
 		Cursor cursor = db.rawQuery(selectQuery, null);		
 		return cursor;
+	}
+	
+	public void Update_ByID(int id, String sFrom, String sFromText, String sTo, String sToText, String sMultiBy)
+	{
+		SQLiteDatabase db = this.getWritableDatabase();
+		ContentValues values = new ContentValues();
+		values.put(dBase.COLUMN_NAME_FROMSYMBOL, sFrom);
+		values.put(dBase.COLUMN_NAME_FROMTEXT, sFromText);
+		values.put(dBase.COLUMN_NAME_TOSYMBOL, sTo);
+		values.put(dBase.COLUMN_NAME_TOTEXT, sToText);
+		values.put(dBase.COLUMN_NAME_MULTIBY, sMultiBy);
+		
+		db.update(dBase.TABLE_NAME, values, dBase._ID+"="+id, null);	
 	}
 
 	public List<Convs> getAllConvs()

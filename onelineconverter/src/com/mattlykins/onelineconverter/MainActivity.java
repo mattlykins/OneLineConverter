@@ -28,10 +28,6 @@ public class MainActivity extends Activity implements OnClickListener
 	Button bConvert;
 	TextView tvOutput;
 	String sEntry, sValue, sFromUnit, sToUnit;
-	String smtocm[] =
-	{ "m", "cm", "100" };
-	String skmtom[] =
-	{ "km", "m", "1000" };
 	Context context = this;
 
 	dbHelper mydbHelper = new dbHelper(this);

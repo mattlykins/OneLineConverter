@@ -4,17 +4,21 @@ import java.text.DecimalFormat;
 
 import com.mattlykins.onelineconverter.dbContract.dBase;
 
+import android.opengl.Visibility;
 import android.os.Bundle;
 import android.app.Activity;
 import android.content.ContentValues;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.util.Log;
 import android.view.Menu;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.ViewGroup.LayoutParams;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 
 public class AddToDB extends Activity implements OnClickListener
@@ -61,10 +65,14 @@ public class AddToDB extends Activity implements OnClickListener
 			etFromText.setText(extras.getString("sFromText"));
 			etToSymbol.setText(extras.getString("sTo"));
 			etToText.setText(extras.getString("sFromText"));
-			etMultiBy.setText(extras.getString("sMultiBy"));
+			etMultiBy.setText(extras.getString("sMultiBy"));		
 			
+			
+			Button bDelete = (Button)findViewById(R.id.bDelete);
+			//Make button visible
+			bDelete.setVisibility(0);
+			bDelete.setOnClickListener(this);
 		}
-
 	}
 
 	@Override
@@ -157,6 +165,17 @@ public class AddToDB extends Activity implements OnClickListener
 				break;
 			case R.id.bE:
 				etMultiBy.setText(etMultiBy.getText() + "E");
+				break;
+			case R.id.bDelete:
+				if (lgEdit)
+				{
+					dbHelper mydbHelper = new dbHelper(this);
+					mydbHelper.Delete_ByID(UpdateID);					
+				}
+				else
+				{
+					Log.wtf("WTF", "BAD STUFF");
+				}
 				break;
 		}
 

@@ -106,10 +106,7 @@ public class MainActivity extends Activity implements OnClickListener
 				ToTokens[ToDex] = tokTo.nextToken();
 				Log.d("TOKENIZER",ToTokens[ToDex]+ " " + String.valueOf(tokTo.countTokens()) + "\n");
 				ToDex += 1;
-			}				
-
-			double Value = Double.valueOf(sValue);
-			
+			}			
 			
 			
 			//Run conversion on each part of the From Unit
@@ -126,7 +123,7 @@ public class MainActivity extends Activity implements OnClickListener
 						//Call conversion and return conversion factor
 						
 						Log.d("FERRET","Calling junkwrapper with " + sFromUnit + " " + sToUnit + "\n");
-						Double result =	junkwrapper(FromTokens[j],ToTokens[j]);
+						Double result =	FindFactorWrapper(FromTokens[j],ToTokens[j]);
 						Log.d("FERRET","Junkwrapper returned " + result + "\n");
 						
 						if( j != 0 && FromTokens[j-1].equals("/") && ToTokens[j-1].equals("/"))
@@ -157,7 +154,7 @@ public class MainActivity extends Activity implements OnClickListener
 
 	}
 	
-	private double junkwrapper(String sFromUnit,String sToUnit)
+	private double FindFactorWrapper(String sFromUnit,String sToUnit)
 	{
 		// Verify the unit conversion is potentially possible
 		Cursor testFF = mydbHelper.searchFrom(sFromUnit, null);
@@ -182,7 +179,7 @@ public class MainActivity extends Activity implements OnClickListener
 		
 		
 		Log.d("FERRET","Calling junk with " + sFromUnit + " " + sToUnit + "\n");
-		return(junk(sFromUnit,sToUnit,IDS));	
+		return(FindFactor(sFromUnit,sToUnit,IDS));	
 	}
 
 	private List<Convs> AddToList(Cursor cursor, List<Integer> IDS)
@@ -219,7 +216,7 @@ public class MainActivity extends Activity implements OnClickListener
 		return List1;
 	}
 
-	private double junk(String sFromUnit, String sToUnit, List<Integer> IDS)
+	private double FindFactor(String sFromUnit, String sToUnit, List<Integer> IDS)
 	{
 		// List<Integer> IDS = new ArrayList<Integer>();
 

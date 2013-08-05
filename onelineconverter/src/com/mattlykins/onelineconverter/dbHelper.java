@@ -73,7 +73,8 @@ public class dbHelper extends SQLiteOpenHelper
 	public Cursor GetAllRows()
 	{
 		SQLiteDatabase db = this.getReadableDatabase();		
-		String selectQuery = "SELECT  * FROM " + dBase.TABLE_NAME;		
+		String selectQuery = "SELECT  * FROM " + dBase.TABLE_NAME + " ORDER BY " + dBase.COLUMN_NAME_FROMSYMBOL + "," +
+				dBase.COLUMN_NAME_TOSYMBOL + " COLLATE NOCASE ASC";		
 		Cursor cursor = db.rawQuery(selectQuery, null);		
 		return cursor;
 	}

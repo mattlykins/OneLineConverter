@@ -124,7 +124,9 @@ public class AddToDB extends Activity implements OnClickListener
 						String newsMultiBy = dfSigFig.format(Double.parseDouble(sMultiBy));
 						
 						
-						mydbHelper.Update_ByID(UpdateID, sFrom, sFromText, sTo, sToText, newsMultiBy);						
+						mydbHelper.Update_ByID(UpdateID, sFrom, sFromText, sTo, sToText, newsMultiBy);
+						
+						finish();
 					}
 					else
 					{
@@ -170,7 +172,8 @@ public class AddToDB extends Activity implements OnClickListener
 				if (lgEdit)
 				{
 					dbHelper mydbHelper = new dbHelper(this);
-					mydbHelper.Delete_ByID(UpdateID);					
+					mydbHelper.Delete_ByID(UpdateID);
+					finish();
 				}
 				else
 				{

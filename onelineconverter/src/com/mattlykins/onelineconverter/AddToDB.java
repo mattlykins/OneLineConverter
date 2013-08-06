@@ -1,6 +1,7 @@
 package com.mattlykins.onelineconverter;
 
 import java.text.DecimalFormat;
+import java.util.List;
 
 import com.mattlykins.onelineconverter.dbContract.dBase;
 
@@ -28,6 +29,7 @@ public class AddToDB extends Activity implements OnClickListener
 	Button bSubmit, bE;
 	Boolean lgEdit;
 	int UpdateID;
+	DBFunctions dbFunctions = new DBFunctions(this, new dbHelper(this));
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState)
@@ -125,6 +127,10 @@ public class AddToDB extends Activity implements OnClickListener
 						
 						
 						mydbHelper.Update_ByID(UpdateID, sFrom, sFromText, sTo, sToText, newsMultiBy);
+						
+						List<Convs> UnMatchedConvs = dbFunctions.IntegrityTest();
+						boolean lgVerified = dbFunctions.boolIntegrityCheck(UnMatchedConvs);
+						
 						
 						finish();
 					}

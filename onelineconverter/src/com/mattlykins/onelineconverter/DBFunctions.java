@@ -5,6 +5,7 @@ import java.util.List;
 
 import com.mattlykins.onelineconverter.dbContract.dBase;
 
+import android.app.Activity;
 import android.content.Context;
 import android.database.Cursor;
 import android.util.Log;
@@ -31,7 +32,7 @@ public class DBFunctions
 				boolean lgAddToList = true;
 				Convs conv = new Convs(cursor.getString(dBase.NDEX_ID), cursor.getString(dBase.NDEX_FROMSYMBOL), cursor.getString(dBase.NDEX_FROMTEXT),
 						cursor.getString(dBase.NDEX_TOSYMBOL), cursor.getString(dBase.NDEX_TOTEXT), cursor.getString(dBase.NDEX_MULTIBY));
-				
+
 				if (lgAddToList)
 				{
 					Log.d("FERRET",
@@ -45,25 +46,66 @@ public class DBFunctions
 		}
 		return List1;
 	}
-	
-	public boolean IntegrityTest()
+
+	public List<Convs> IntegrityTest()
 	{
-		//Create a list of all of the conversions
+		// Create a list of all of the conversions
 		List<Convs> AllConvs = new ArrayList<Convs>();
-		AllConvs = mydbHelper.getAllConvs();				
-		
-		//Loop through each conversion and verify that an inverse conversion exists with the correct factor
-		for (Convs C: AllConvs )
-		{			
-			
-			
+		AllConvs = mydbHelper.getAllConvs();
+
+		// Loop through each conversion and verify that an inverse conversion
+		// exists with the correct factor
+		boolean lgFound = false;
+		List<Convs> NoMatchConvs = new ArrayList<Convs>();
+		for (Convs C : AllConvs)
+		{
+			lgFound = false;
+			for (Convs C2 : AllConvs)
+			{
+				if (C.getFromSymbol().equals(C2.getToSymbol()) && C.getToSymbol().equals(C2.getFromSymbol()))
+				{
+					Double BaseMult = Double.parseDouble(C.getMultiBy());
+					Double ComparMult = 1 / Double.parseDouble(C2.getMultiBy());
+					Double DiffAvg = 2 * Math.abs(BaseMult - ComparMult) / (BaseMult + ComparMult);
+					if (DiffAvg < 0.01)
+					{
+						// Values check out
+						Log.d("TAG", C.getFromSymbol() + " to " + C.getToSymbol() + ": Verified");
+						lgFound = true;
+						break;
+					}
+					else
+					{
+						// Values are bad
+						Log.d("TAG", C.getFromSymbol() + " to " + C.getToSymbol() + ": BAD");
+						Log.d("TAG", C.getFromSymbol() + " " + C.getToSymbol() + " " + C.getMultiBy() + " vs " + C2.getFromSymbol() + " " + C2.getToSymbol()
+								+ " " + C2.getMultiBy());
+						break;
+					}
+
+				}
+				if (!lgFound)
+				{
+					// No match found
+					NoMatchConvs.add(C);
+				}
+			}
 		}
-		
-		
-		
-		
-		
-		return false;
+		return NoMatchConvs;
+	}
+
+	public boolean boolIntegrityCheck(List<Convs> Convs)
+	{
+		if (Convs == null)
+		{
+			// All DB entries verified
+			return true;
+		}
+		else
+		{
+			//There were problems. Show the problems
+			return false;
+		}
 	}
 
 	double FindFactorWrapper(MainActivity act, String sFromUnit, String sToUnit)
@@ -86,8 +128,6 @@ public class DBFunctions
 			toast.show();
 			return 0;
 		}
-
-		List<Integer> IDS = new ArrayList<Integer>();
 
 		Log.d("FERRET", "Calling junk with " + sFromUnit + " " + sToUnit + "\n");
 		return (FindFactor(act, sFromUnit, sToUnit));

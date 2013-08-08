@@ -1,7 +1,7 @@
 package com.mattlykins.onelineconverter;
 
+import java.text.DecimalFormat;
 import java.util.StringTokenizer;
-
 
 import android.os.Bundle;
 import android.app.Activity;
@@ -54,7 +54,7 @@ public class MainActivity extends Activity implements OnClickListener
 				Intent intent = new Intent(this, AddToDB.class);
 				startActivity(intent);
 				return true;
-				
+
 			case R.id.action_viewdb:
 				Intent intent1 = new Intent(this, ViewDB.class);
 				startActivity(intent1);
@@ -65,7 +65,7 @@ public class MainActivity extends Activity implements OnClickListener
 
 	@Override
 	public void onClick(View v)
-	{	
+	{
 		sEntry = etTextEntry.getText().toString();
 		String[] sTokens = sEntry.split(" ");
 
@@ -74,69 +74,66 @@ public class MainActivity extends Activity implements OnClickListener
 			sValue = sTokens[0].trim();
 			sFromUnit = sTokens[1].trim();
 			sToUnit = sTokens[2].trim();
-			
-			//Split From Unit into tokens
+
+			// Split From Unit into tokens
 			StringTokenizer tokFrom = new StringTokenizer(sFromUnit, "[*/]", true);
-			String[] FromTokens = new String[tokFrom.countTokens()+1];
-			int FromDex = 0;		
-			
-			
-			while(tokFrom.hasMoreElements())
+			String[] FromTokens = new String[tokFrom.countTokens() + 1];
+			int FromDex = 0;
+
+			while (tokFrom.hasMoreElements())
 			{
 				FromTokens[FromDex] = tokFrom.nextToken();
-				Log.d("TOKENIZER",FromTokens[FromDex]+ " " + String.valueOf(tokFrom.countTokens()) + "\n");
+				Log.d("TOKENIZER", FromTokens[FromDex] + " " + String.valueOf(tokFrom.countTokens()) + "\n");
 				FromDex += 1;
 			}
-			
-			//Split To Unit into tokens
+
+			// Split To Unit into tokens
 			StringTokenizer tokTo = new StringTokenizer(sToUnit, "[*/]", true);
-			String[] ToTokens = new String[tokTo.countTokens()+1];
+			String[] ToTokens = new String[tokTo.countTokens() + 1];
 			int ToDex = 0;
-			
-			while(tokTo.hasMoreElements())
+
+			while (tokTo.hasMoreElements())
 			{
 				ToTokens[ToDex] = tokTo.nextToken();
-				Log.d("TOKENIZER",ToTokens[ToDex]+ " " + String.valueOf(tokTo.countTokens()) + "\n");
+				Log.d("TOKENIZER", ToTokens[ToDex] + " " + String.valueOf(tokTo.countTokens()) + "\n");
 				ToDex += 1;
-			}			
-			
-			
-			//Run conversion on each part of the From Unit
+			}
+
+			// Run conversion on each part of the From Unit
 			Double TotalConvFactor = 1.0;
-			
-			//Verify dimensional compatibility
-			if( FromDex == ToDex )
-			{				
-				for( int j = 0; j < FromDex; j++ )
+
+			// Verify dimensional compatibility
+			if (FromDex == ToDex)
+			{
+				for (int j = 0; j < FromDex; j++)
 				{
-					if( !FromTokens[j].equals("*") && !FromTokens[j].equals("/")
-							&& !ToTokens[j].equals("*") && !ToTokens[j].equals("/"))
+					if (!FromTokens[j].equals("*") && !FromTokens[j].equals("/") && !ToTokens[j].equals("*") && !ToTokens[j].equals("/"))
 					{
-						//Call conversion and return conversion factor
-						
-						Log.d("FERRET","Calling junkwrapper with " + sFromUnit + " " + sToUnit + "\n");
-						Double result =	dbFunctions.FindFactorWrapper(this, FromTokens[j],ToTokens[j]);
-						Log.d("FERRET","Junkwrapper returned " + result + "\n");
-						
-						if( j != 0 && FromTokens[j-1].equals("/") && ToTokens[j-1].equals("/"))
+						// Call conversion and return conversion factor
+
+						Log.d("FERRET", "Calling junkwrapper with " + sFromUnit + " " + sToUnit + "\n");
+						Double result = dbFunctions.FindFactorWrapper(this, FromTokens[j], ToTokens[j]);
+						Log.d("FERRET", "Junkwrapper returned " + result + "\n");
+
+						if (j != 0 && FromTokens[j - 1].equals("/") && ToTokens[j - 1].equals("/"))
 						{
-							Log.d("FERRET","TotalConvFactor = " + TotalConvFactor + "  result=" + result + "\n");
+							Log.d("FERRET", "TotalConvFactor = " + TotalConvFactor + "  result=" + result + "\n");
 							TotalConvFactor /= result;
 						}
 						else
 						{
 							TotalConvFactor *= result;
 						}
-						
 					}
-				}				
+				}
 			}
 			else
 			{
-				//Bad Stuff
+				// Bad Stuff
 			}
-			
-			String ConvertedValue = String.valueOf(Double.parseDouble(sValue)*TotalConvFactor);
+
+			DecimalFormat dfSigFig = new DecimalFormat("0.####E0");
+			String ConvertedValue = dfSigFig.format(Double.parseDouble(sValue) * TotalConvFactor);
 			tvOutput.setText(ConvertedValue + "");
 		}
 		else

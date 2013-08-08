@@ -1,6 +1,7 @@
 package com.mattlykins.onelineconverter;
 
 import java.text.DecimalFormat;
+import java.util.ArrayList;
 import java.util.List;
 
 import com.mattlykins.onelineconverter.dbContract.dBase;
@@ -67,11 +68,10 @@ public class AddToDB extends Activity implements OnClickListener
 			etFromText.setText(extras.getString("sFromText"));
 			etToSymbol.setText(extras.getString("sTo"));
 			etToText.setText(extras.getString("sFromText"));
-			etMultiBy.setText(extras.getString("sMultiBy"));		
-			
-			
-			Button bDelete = (Button)findViewById(R.id.bDelete);
-			//Make button visible
+			etMultiBy.setText(extras.getString("sMultiBy"));
+
+			Button bDelete = (Button) findViewById(R.id.bDelete);
+			// Make button visible
 			bDelete.setVisibility(0);
 			bDelete.setOnClickListener(this);
 		}
@@ -111,7 +111,7 @@ public class AddToDB extends Activity implements OnClickListener
 				else
 				{
 					DecimalFormat dfSigFig = new DecimalFormat("0.####E0");
-					
+
 					if (lgEdit)
 					{
 						dbHelper mydbHelper = new dbHelper(this);
@@ -121,25 +121,25 @@ public class AddToDB extends Activity implements OnClickListener
 						sTo = etToSymbol.getText().toString();
 						sToText = etToText.getText().toString();
 						sMultiBy = etMultiBy.getText().toString();
-						
-						//Set the format
+
+						// Set the format
 						String newsMultiBy = dfSigFig.format(Double.parseDouble(sMultiBy));
-						
-						
+
 						mydbHelper.Update_ByID(UpdateID, sFrom, sFromText, sTo, sToText, newsMultiBy);
-						
-						List<Convs> UnMatchedConvs = dbFunctions.IntegrityTest();
-						boolean lgVerified = dbFunctions.boolIntegrityCheck(UnMatchedConvs);
-						
-						
-						finish();
+
+						List<Convs> UnMatchedConvs = new ArrayList<Convs>();
+						List<Convs> WrongValueConvs = new ArrayList<Convs>();
+						dbFunctions.IntegrityTest(UnMatchedConvs, WrongValueConvs);
+						boolean lgVerified = dbFunctions.boolIntegrityCheck(UnMatchedConvs, WrongValueConvs, true);
+
+						// finish();
 					}
 					else
 					{
 
 						dbHelper mydbHelper = new dbHelper(this);
 						SQLiteDatabase mydB = mydbHelper.getWritableDatabase();
-						
+
 						String newsMultiBy = dfSigFig.format(Double.parseDouble(tMB));
 
 						ContentValues values = new ContentValues();

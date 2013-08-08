@@ -6,7 +6,9 @@ import java.util.List;
 import com.mattlykins.onelineconverter.dbContract.dBase;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.database.Cursor;
 import android.util.Log;
 import android.widget.Toast;
@@ -47,7 +49,7 @@ public class DBFunctions
 		return List1;
 	}
 
-	public List<Convs> IntegrityTest()
+	public void IntegrityTest(List<Convs> UnMatchedConvs, List<Convs> WrongValueConvs)
 	{
 		// Create a list of all of the conversions
 		List<Convs> AllConvs = new ArrayList<Convs>();
@@ -56,7 +58,6 @@ public class DBFunctions
 		// Loop through each conversion and verify that an inverse conversion
 		// exists with the correct factor
 		boolean lgFound = false;
-		List<Convs> NoMatchConvs = new ArrayList<Convs>();
 		for (Convs C : AllConvs)
 		{
 			lgFound = false;
@@ -80,30 +81,87 @@ public class DBFunctions
 						Log.d("TAG", C.getFromSymbol() + " to " + C.getToSymbol() + ": BAD");
 						Log.d("TAG", C.getFromSymbol() + " " + C.getToSymbol() + " " + C.getMultiBy() + " vs " + C2.getFromSymbol() + " " + C2.getToSymbol()
 								+ " " + C2.getMultiBy());
+						WrongValueConvs.add(C2);
 						break;
 					}
-
-				}
-				if (!lgFound)
-				{
-					// No match found
-					NoMatchConvs.add(C);
 				}
 			}
+			if (!lgFound)
+			{
+				// No match found
+				UnMatchedConvs.add(C);
+			}
 		}
-		return NoMatchConvs;
 	}
 
-	public boolean boolIntegrityCheck(List<Convs> Convs)
+	public boolean boolIntegrityCheck(List<Convs> UnMatchedConvs, List<Convs> WrongValueConvs, Boolean lgShowVerified)
 	{
-		if (Convs == null)
+		// Set up alert dialog for all three cases (Verified, UnMatched, and WrongValue)
+		AlertDialog.Builder adb = new AlertDialog.Builder(context);		
+		adb.setCancelable(false);
+		adb.setPositiveButton("OK", new DialogInterface.OnClickListener()
+		{
+			public void onClick(DialogInterface dialog, int id)
+			{
+				// here you can add functions
+				dialog.cancel();
+			}
+		});
+		
+		//Determine which of the three cases
+		if (UnMatchedConvs.isEmpty() && WrongValueConvs.isEmpty())
 		{
 			// All DB entries verified
+			if (lgShowVerified)
+			{				
+				adb.setTitle("Database Integrity Verified");
+				adb.setMessage("Database Integrity Verified");				
+				AlertDialog ad = adb.create();
+				ad.show();
+			}
 			return true;
+		}
+		else if( !UnMatchedConvs.isEmpty() && WrongValueConvs.isEmpty() )
+		{
+			// There are unmatched conversions
+			adb.setTitle("Database Integrity Compromised!");
+			String line = "The following conversions are unmatched:\n\n";
+			
+			for( Convs C: UnMatchedConvs)
+			{
+				line = line + C.getFromSymbol() + " to " + C.getToSymbol() + "\n";
+			}		
+			
+			adb.setMessage(line);				
+			AlertDialog ad = adb.create();
+			ad.show();			
+			return false;
 		}
 		else
 		{
-			//There were problems. Show the problems
+			//There are conversions with the wrong value and possibly unmatched
+			adb.setTitle("Database Integrity Compromised!");
+			String line = "The following conversions have the wrong conversion or are unmatched:\n\n";
+			
+			for( Convs C: WrongValueConvs)
+			{
+				for( Convs C2: UnMatchedConvs)
+				{
+					if( C.getFromSymbol().equals(C2.getToSymbol()) && C.getToSymbol().equals(C2.getFromSymbol()))
+					{
+						line = line + C.getFromSymbol() + " to " + C.getToSymbol() + " by " + C.getMultiBy() + " != " +
+								C2.getFromSymbol() + " to " + C2.getToSymbol() + " by " + C2.getMultiBy() + "\n";
+					}
+					else
+					{
+						line = line + C2.getFromSymbol() + " to " + C2.getToSymbol() + "\n";
+					}
+				}
+			}		
+			
+			adb.setMessage(line);				
+			AlertDialog ad = adb.create();
+			ad.show();			
 			return false;
 		}
 	}

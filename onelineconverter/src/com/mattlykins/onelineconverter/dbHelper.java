@@ -68,22 +68,22 @@ public class dbHelper extends SQLiteOpenHelper
 		}
 		return cursor;
 	}
-	
+
 	public Cursor GetAllRows()
 	{
-		SQLiteDatabase db = this.getReadableDatabase();		
-		String selectQuery = "SELECT  * FROM " + dBase.TABLE_NAME + " ORDER BY " + dBase.COLUMN_NAME_FROMSYMBOL + "," +
-				dBase.COLUMN_NAME_TOSYMBOL + " COLLATE NOCASE ASC";		
-		Cursor cursor = db.rawQuery(selectQuery, null);		
+		SQLiteDatabase db = this.getReadableDatabase();
+		String selectQuery = "SELECT  * FROM " + dBase.TABLE_NAME + " ORDER BY " + dBase.COLUMN_NAME_FROMSYMBOL + "," + dBase.COLUMN_NAME_TOSYMBOL
+				+ " COLLATE NOCASE ASC";
+		Cursor cursor = db.rawQuery(selectQuery, null);
 		return cursor;
 	}
-	
+
 	public void Delete_ByID(int id)
 	{
 		SQLiteDatabase db = this.getWritableDatabase();
-		db.delete(dBase.TABLE_NAME, dBase._ID+"="+id, null);
+		db.delete(dBase.TABLE_NAME, dBase._ID + "=" + id, null);
 	}
-	
+
 	public void Update_ByID(int id, String sFrom, String sFromText, String sTo, String sToText, String sMultiBy)
 	{
 		SQLiteDatabase db = this.getWritableDatabase();
@@ -93,8 +93,8 @@ public class dbHelper extends SQLiteOpenHelper
 		values.put(dBase.COLUMN_NAME_TOSYMBOL, sTo);
 		values.put(dBase.COLUMN_NAME_TOTEXT, sToText);
 		values.put(dBase.COLUMN_NAME_MULTIBY, sMultiBy);
-		
-		db.update(dBase.TABLE_NAME, values, dBase._ID+"="+id, null);	
+
+		db.update(dBase.TABLE_NAME, values, dBase._ID + "=" + id, null);
 	}
 
 	public List<Convs> getAllConvs()
@@ -133,9 +133,7 @@ public class dbHelper extends SQLiteOpenHelper
 	@Override
 	public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion)
 	{
-		Log.i(TAG, "Upgrading database from version " + oldVersion
-	              + " to "
-	              + newVersion + ", which will destroy all old data");
+		Log.i(TAG, "Upgrading database from version " + oldVersion + " to " + newVersion);
 	}
 
 }
